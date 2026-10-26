@@ -10,12 +10,25 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware Best Practice: Batasi CORS ke origin Frontend Vite (lokal)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://taskplannerapp.vercel.app/",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Izinkan request tanpa origin (seperti Postman) atau jika origin ada di daftar
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Atau set true langsung untuk mengizinkan semua domain
+      }
+    },
     credentials: true,
   }),
 );
+
 app.use(express.json());
 
 // Routes
